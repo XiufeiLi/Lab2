@@ -78,14 +78,8 @@ for k = 1:n
 end
 
 plot(cn)% estimation of cn growing with n
-j = 100 % choose the jth particle 
+j = 1 % choose the jth particle 
 plot(RW(:,1,j),RW(:,2,j)) % plot the randon walk trace
-% Below is for problem 5 plot, must use w in problem 4, since w will be
-% changed in problem 5.
-k = 100; % choose the k-th step u want to see details
-CW = cumsum([0 w(k,:)]);
-[num,ind] = histc(rand(1,N), CW/CW(end));
-plot(num) % after resampling, the replication numbers of each particle.
 %% 5. SISR
 N = 5000;% Number of simulated particles
 % part = zeros(N,2); % init all particles, started at (0,0) in Z2 dimension. Column 1 represents for the x axis, and column 2 for y axis.
@@ -115,6 +109,10 @@ for k = 1:n
     % selection part
     CW = cumsum([0 w(k,:)]);
     [~,ind] = histc(rand(1,N), CW/CW(end));
-    RW(1:k+1,:,:) = RW(1:k+1,:,ind);
+    RW(k+1,2,:) = RW(k+1,2,ind);
 end
-% Using result of problem 5 for problem 6
+
+k = 100; % choose the k-th step u want to see details
+CW = cumsum([0 w(k,:)]);
+[num,ind] = histc(rand(1,N), CW/CW(end));
+plot(num) % after resampling, the replication numbers of each particle.

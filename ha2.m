@@ -60,7 +60,7 @@ cn = zeros(n,1); % Init cn. It is the value we want. Alternative: usedouble.empt
 
 for k = 1:n
     for i = 1:N
-        next = getNext(RW(1:k,:,i));
+        next = getNext(RW(1:k,:,i)); % Possible next positions
         possibles = size(next,1);
         if possibles == 0
             gk1 = 0; %Here gk1 means gk+1 in slides
@@ -100,7 +100,7 @@ cn = zeros(n+1,1); % Init cn. It is the value we want. Alternative: usedouble.em
 cn(1) = 1;
 for k = 1:n
     for i = 1:N
-        next = getNext(RW(1:k,:,i));
+        next = getNext(RW(1:k,:,i)); % Possible next positions
         possibles = size(next,1);
         if possibles == 0
             gk1 = 0; %Here gk1 means gk+1 in slides
@@ -146,7 +146,7 @@ for t = 1:T % 20 times estimation
     cn(1) = 1;
     for k = 1:n
         for i = 1:N
-            next = getNext(RW(1:k,:,i));
+            next = getNext(RW(1:k,:,i)); % Possible next positions
             possibles = size(next,1);
             if possibles == 0
                 gk1 = 0; %Here gk1 means gk+1 in slides
@@ -181,14 +181,14 @@ end
 % A2 = [1.45783776187533,1.49661616643717,1.34579370173985,1.35408772286713,1.37054844335199,1.34953753399444,1.34336240362084,1.34175139324528,1.32659437605983,1.41201740735313,1.42243400326149,1.33565332859375,1.29019975639461,1.29516889274759,1.51446003601618,1.42341345347709,1.32012078198599,1.35495736766942,1.42149197086665,1.41000489774257]
 % mu2 = [2.64033365862045,2.64268398629262,2.64102730283201,2.63917147349139,2.63667118296124,2.63736210872200,2.63581480044301,2.63655908612701,2.64251571650845,2.64423781810494,2.64058018933594,2.63563417373426,2.63882696831863,2.64036088640296,2.64126254064595,2.63909919632319,2.63824534266435,2.64089706890159,2.63553199765645,2.64045679321556]
 % gamma2 = [1.27380717439400,1.25275243032653,1.30208769222917,1.30478377683079,1.30574303971811,1.31974785654294,1.32320024842473,1.32273262168226,1.31418397846196,1.27791810298498,1.28504285819992,1.32132029987453,1.33855649378919,1.31903721157300,1.25451469019331,1.29167294497936,1.32541321349035,1.29859792924225,1.29667143606282,1.28974922008958]
-%% problem 9. d dimension. SISR as problem 5, coefficients as problem 6. Similarly, coefficients estimation results are in bottom annotation.
-d = 3; % Dimension
+%% problem 9. d dimension. SISR as problem 5, coefficients as problem 6. Similarly, coefficients estimation results are in bottom annotation. It is super slow...
+d = 3; % Dimension. Be careful with d = 4, which is not supported here, since it has another Cn(d) expression.
 T = 20; % Estimation times
 Ad = zeros(T,1);
 mud = zeros(T,1);
 gammad = zeros(T,1);
 for t = 1:T % 20 times estimation
-    N = 5000;% Number of simulated particles
+    N = 2000;% Number of simulated particles. Reduced to 2000 since out of memory.
     % part = zeros(N,2); % init all particles, started at (0,0) in Z2 dimension. Column 1 represents for the x axis, and column 2 for y axis.
     n = 200;
     w = zeros(n+1,N); % init w. 
@@ -198,7 +198,7 @@ for t = 1:T % 20 times estimation
     cn(1) = 1;
     for k = 1:n
         for i = 1:N
-            next = getNextd(RW(1:k,:,i));
+            next = getNextd(RW(1:k,:,i),d);% Modified getNext for d dimension
             possibles = size(next,1);
             if possibles == 0
                 gk1 = 0; %Here gk1 means gk+1 in slides
@@ -229,4 +229,8 @@ for t = 1:T % 20 times estimation
     mud(t) = exp(coef(2));
     gammad(t) = coef(3) + 1;
 end
-mudBound = 2*d - 1 - 1/(2d) - 3/(2d)^2 - 16/(2d)^3 % Asymptotic bound on mud for large d found in Graham (2014);
+mudBound = 2*d - 1 - 1/(2*d) - 3/(2*d)^2 - 16/(2*d)^3; % Asymptotic bound on mud for large d found in Graham (2014); For d = 3, 4.6759, close to estimation.
+% Result:
+% Ad = [1.21250812147076,1.14919779658453,1.22860321177269,1.23457689857401,1.14827765869649,1.19488297070291,1.32760060690718,1.17547408352294,1.29140037045228,1.21584621004824,1.18466070344711,1.28000952795186,1.21228964079189,1.22705964422744,1.17095313575684,1.19627036817860,1.28681299007487,1.32284826953376,1.19534287065679,1.16068704870388]
+% mud = [4.68436307067489,4.68300961627268,4.68445653100413,4.68251760043898,4.68442480157643,4.68319182266672,4.68326828837133,4.68209146451177,4.69074518532928,4.68392551232568,4.68356201712379,4.68250337027341,4.68140077136314,4.68464584198320,4.68300512887196,4.68307985938800,4.69138591576883,4.68893957447846,4.68191492431498,4.68589682718870]
+% gammad = [1.16660980980800,1.18270274096090,1.15357518348505,1.14990959855685,1.19088019024424,1.16431225504716,1.11834774338248,1.17760522571050,1.11951536786425,1.15642561470567,1.16216529760539,1.14043089517892,1.16667884447942,1.14567302386051,1.16987270513829,1.15934151988693,1.12084230101288,1.10465566844078,1.16681501835484,1.18414321917910]

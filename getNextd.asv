@@ -9,11 +9,11 @@ function next = getNextd(rw,d)
     for i = 1:d
         point = lastPoint;
         point(i) = point(i) - 1;
-        possibleNext(2*i-1,:) = point;
+        possibleNext(2i-1,:) = point;
         
         point = lastPoint;
         point(i) = point(i) + 1;
-        possibleNext(2*i,:) = point;
+        possibleNext(2i,:) = point;
     end
     next = [];
     for i = 1:size(possibleNext,1)
